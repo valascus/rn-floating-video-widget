@@ -1,7 +1,6 @@
-import {NativeModules, DeviceEventEmitter} from 'react-native';
+import { NativeModules, DeviceEventEmitter } from "react-native";
 
 const Widget = NativeModules.FloatingVideoWidget;
-
 
 /**
  * Opens the floating video player and starts
@@ -12,25 +11,36 @@ const Widget = NativeModules.FloatingVideoWidget;
  * @param {Array} data.videos List of video objects structured similar to data.video.
  * @param {number}  data.seek Seek value of video.
  * @param {number} data.index Index of the video in data.videos array.
+ * @param {number} data.skipSize
  */
 
 export function open(data) {
-    if (!data || typeof data !== "object") throw new Error("data must be an object with atleast one key as video object");
-    if (!data.video || typeof data.video !== "object" || !data.video.url) throw new Error("video must be an object with atleast one key 'uri: url to video");
-    if (!data.hasOwnProperty("videos") || data.videos.length == 0) {
-        let videos = [];
-        videos.push(data.video);
-        data.videos = videos;
-    }
-    if (!data.hasOwnProperty("seek") || !data.seek ) {
-        data.seek = 0;
-    }
+  if (!data || typeof data !== "object")
+    throw new Error(
+      "data must be an object with atleast one key as video object"
+    );
+  if (!data.video || typeof data.video !== "object" || !data.video.url)
+    throw new Error(
+      "video must be an object with atleast one key 'uri: url to video"
+    );
+  if (!data.hasOwnProperty("videos") || data.videos.length == 0) {
+    let videos = [];
+    videos.push(data.video);
+    data.videos = videos;
+  }
+  if (!data.hasOwnProperty("seek") || !data.seek) {
+    data.seek = 0;
+  }
 
-    if (!data.hasOwnProperty("index") || !data.seek  ) {
-        data.index = 0;
-    }
-    Widget.open(data);
+  if (!data.hasOwnProperty("index") || !data.seek) {
+    data.index = 0;
+  }
 
+  if (!data.hasOwnProperty("skipSize") || !data.seek) {
+    data.skipSize = 10;
+  }
+
+  Widget.open(data);
 }
 
 /**
@@ -39,8 +49,7 @@ export function open(data) {
  */
 
 export function close() {
-
-    Widget.close();
+  Widget.close();
 }
 
 /**
@@ -49,7 +58,7 @@ export function close() {
  */
 
 export async function requestOverlayPermission() {
-    return await Widget.requestOverlayPermission();
+  return await Widget.requestOverlayPermission();
 }
 
 /**
@@ -58,7 +67,7 @@ export async function requestOverlayPermission() {
  */
 
 export function play() {
-    Widget.play();
+  Widget.play();
 }
 
 /**
@@ -66,7 +75,7 @@ export function play() {
  *
  */
 export function pause() {
-    Widget.pause();
+  Widget.pause();
 }
 
 /**
@@ -74,7 +83,7 @@ export function pause() {
  *
  */
 export function prev() {
-    Widget.prev();
+  Widget.prev();
 }
 
 /**
@@ -82,7 +91,7 @@ export function prev() {
  *
  */
 export function next() {
-    Widget.next();
+  Widget.next();
 }
 
 /**
@@ -91,11 +100,9 @@ export function next() {
  */
 
 export function onError(callback) {
+  if (!callback) throw new Error("Callback cannot be undefined");
 
-    if (!callback) throw new Error("Callback cannot be undefined");
-
-    DeviceEventEmitter.addListener("onError", (event) => callback(event))
-
+  DeviceEventEmitter.addListener("onError", (event) => callback(event));
 }
 
 /**
@@ -103,8 +110,8 @@ export function onError(callback) {
  * @type {function}
  */
 export function onPlay(callback) {
-    if (!callback) throw new Error("Callback cannot be undefined");
-    DeviceEventEmitter.addListener("onPlay", (event) => callback(event))
+  if (!callback) throw new Error("Callback cannot be undefined");
+  DeviceEventEmitter.addListener("onPlay", (event) => callback(event));
 }
 
 /**
@@ -112,8 +119,8 @@ export function onPlay(callback) {
  * @type {function}
  */
 export function onPause(callback) {
-    if (!callback) throw new Error("Callback cannot be undefined");
-    DeviceEventEmitter.addListener("onPause", (event) => callback(event))
+  if (!callback) throw new Error("Callback cannot be undefined");
+  DeviceEventEmitter.addListener("onPause", (event) => callback(event));
 }
 
 /**
@@ -121,8 +128,17 @@ export function onPause(callback) {
  * @type {function}
  */
 export function onNext(callback) {
-    if (!callback) throw new Error("Callback cannot be undefined");
-    DeviceEventEmitter.addListener("onNext", (event) => callback(event))
+  if (!callback) throw new Error("Callback cannot be undefined");
+  DeviceEventEmitter.addListener("onNext", (event) => callback(event));
+}
+
+/**
+ * @event onProgress Called when destroy
+ * @type {function}
+ */
+export function onProgress(callback) {
+  if (!callback) throw new Error("Callback cannot be undefined");
+  DeviceEventEmitter.addListener("onProgress", (event) => callback(event));
 }
 
 /**
@@ -130,8 +146,8 @@ export function onNext(callback) {
  * @type {function}
  */
 export function onPrev(callback) {
-    if (!callback) throw new Error("Callback cannot be undefined");
-    DeviceEventEmitter.addListener("onPrev", (event) => callback(event))
+  if (!callback) throw new Error("Callback cannot be undefined");
+  DeviceEventEmitter.addListener("onPrev", (event) => callback(event));
 }
 
 /**
@@ -139,17 +155,26 @@ export function onPrev(callback) {
  * @type {function}
  */
 export function onClose(callback) {
-    if (!callback) throw new Error("Callback cannot be undefined");
-    DeviceEventEmitter.addListener("onClose", (event) => callback(event))
+  if (!callback) throw new Error("Callback cannot be undefined");
+  DeviceEventEmitter.addListener("onClose", (event) => callback(event));
 }
+
+// /**
+//  * @event backToApp Called when the floating video has closed.
+//  * @type {function}
+//  */
+// export function backToApp(callback) {
+//   if (!callback) throw new Error("Callback cannot be undefined");
+//   DeviceEventEmitter.addListener("backToApp", (event) => callback(event));
+// }
 
 /**
  * @event onOpen  Called when a new video is played from react-native side or when the floating player is opened
  * @type {function}
  */
 export function onOpen(callback) {
-    if (!callback) throw new Error("Callback cannot be undefined");
-    DeviceEventEmitter.addListener("onOpen", (event) => callback(event))
+  if (!callback) throw new Error("Callback cannot be undefined");
+  DeviceEventEmitter.addListener("onOpen", (event) => callback(event));
 }
 
 /**
@@ -158,8 +183,5 @@ export function onOpen(callback) {
  */
 
 export function removeAllListeners() {
-
-
-    DeviceEventEmitter.removeAllListeners();
+  DeviceEventEmitter.removeAllListeners();
 }
-
