@@ -2,6 +2,7 @@ import { NativeModules, DeviceEventEmitter } from "react-native";
 
 const Widget = NativeModules.FloatingVideoWidget;
 
+const listener = [];
 /**
  * Opens the floating video player and starts
  * playing the video.
@@ -101,8 +102,8 @@ export function next() {
 
 export function onError(callback) {
   if (!callback) throw new Error("Callback cannot be undefined");
-
-  DeviceEventEmitter.addListener("onError", (event) => callback(event));
+  DeviceEventEmitter.addListener("onError", callback);
+  listener.push(() => DeviceEventEmitter.removeListener("onError", callback));
 }
 
 /**
@@ -111,7 +112,8 @@ export function onError(callback) {
  */
 export function onPlay(callback) {
   if (!callback) throw new Error("Callback cannot be undefined");
-  DeviceEventEmitter.addListener("onPlay", (event) => callback(event));
+  DeviceEventEmitter.addListener("onPlay", callback);
+  listener.push(() => DeviceEventEmitter.removeListener("onPlay", callback));
 }
 
 /**
@@ -120,7 +122,8 @@ export function onPlay(callback) {
  */
 export function onPause(callback) {
   if (!callback) throw new Error("Callback cannot be undefined");
-  DeviceEventEmitter.addListener("onPause", (event) => callback(event));
+  DeviceEventEmitter.addListener("onPause", callback);
+  listener.push(() => DeviceEventEmitter.removeListener("onPause", callback));
 }
 
 /**
@@ -129,7 +132,8 @@ export function onPause(callback) {
  */
 export function onNext(callback) {
   if (!callback) throw new Error("Callback cannot be undefined");
-  DeviceEventEmitter.addListener("onNext", (event) => callback(event));
+  DeviceEventEmitter.addListener("onNext", callback);
+  listener.push(() => DeviceEventEmitter.removeListener("onNext", callback));
 }
 
 /**
@@ -138,7 +142,10 @@ export function onNext(callback) {
  */
 export function onProgress(callback) {
   if (!callback) throw new Error("Callback cannot be undefined");
-  DeviceEventEmitter.addListener("onProgress", (event) => callback(event));
+  DeviceEventEmitter.addListener("onProgress", callback);
+  listener.push(() =>
+    DeviceEventEmitter.removeListener("onProgress", callback)
+  );
 }
 
 /**
@@ -147,7 +154,8 @@ export function onProgress(callback) {
  */
 export function onPrev(callback) {
   if (!callback) throw new Error("Callback cannot be undefined");
-  DeviceEventEmitter.addListener("onPrev", (event) => callback(event));
+  DeviceEventEmitter.addListener("onPrev", callback);
+  listener.push(() => DeviceEventEmitter.removeListener("onPrev", callback));
 }
 
 /**
@@ -156,17 +164,19 @@ export function onPrev(callback) {
  */
 export function onClose(callback) {
   if (!callback) throw new Error("Callback cannot be undefined");
-  DeviceEventEmitter.addListener("onClose", (event) => callback(event));
+  DeviceEventEmitter.addListener("onClose", callback);
+  listener.push(() => DeviceEventEmitter.removeListener("onClose", callback));
 }
 
 // /**
 //  * @event backToApp Called when the floating video has closed.
 //  * @type {function}
 //  */
-// export function backToApp(callback) {
-//   if (!callback) throw new Error("Callback cannot be undefined");
-//   DeviceEventEmitter.addListener("backToApp", (event) => callback(event));
-// }
+export function backToApp(callback) {
+  if (!callback) throw new Error("Callback cannot be undefined");
+  DeviceEventEmitter.addListener("backToApp", callback);
+  listener.push(() => DeviceEventEmitter.removeListener("backToApp", callback));
+}
 
 /**
  * @event onOpen  Called when a new video is played from react-native side or when the floating player is opened
@@ -174,7 +184,8 @@ export function onClose(callback) {
  */
 export function onOpen(callback) {
   if (!callback) throw new Error("Callback cannot be undefined");
-  DeviceEventEmitter.addListener("onOpen", (event) => callback(event));
+  DeviceEventEmitter.addListener("onOpen", callback);
+  listener.push(() => DeviceEventEmitter.removeListener("onOpen", callback));
 }
 
 /**
@@ -183,5 +194,6 @@ export function onOpen(callback) {
  */
 
 export function removeAllListeners() {
-  DeviceEventEmitter.removeAllListeners();
+  // DeviceEventEmitter.removeAllListeners();
+  while (listener.length > 0) listener.shift()();
 }
