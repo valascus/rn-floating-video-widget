@@ -103,6 +103,17 @@ public class FloatingVideoWidgetModule extends ReactContextBaseJavaModule {
         reactContext.startService(intent);
     }
 
+
+
+    @ReactMethod
+    public void backToApp() {
+       Intent intent = new Intent(reactContext, MainActivity.class);
+       intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+       startActivity(intent);
+    }
+
+    
+
     @ReactMethod
     public void requestOverlayPermission(Promise promise) {
         mPromise = promise;

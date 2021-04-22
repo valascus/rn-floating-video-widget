@@ -126,8 +126,8 @@ public class FloatingVideoWidgetShowService extends Service {
                     Uri myUri = Uri.parse(playingVideo.getString("url"));
                     videoView.setVideoURI(myUri);
                     videoView.seekTo(Seek);
-                    videoView.start();
                     videoView.setKeepScreenOn(true);
+                    videoView.start();
 
                     WritableMap args = Arguments.createMap();
                     args.putString("state", "isOpened");
