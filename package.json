@@ -1,7 +1,7 @@
 {
   "name": "react-native-floating-video",
   "title": "react-native-floating-video",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "React Native Module for Floating/Popup video player on Android.",
   "main": "index.js",
   "scripts": {
