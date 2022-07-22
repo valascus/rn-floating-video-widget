@@ -28,7 +28,7 @@ export function open(data) {
     data.videos = videos;
   }
   if (!data.hasOwnProperty("seek") || !data.seek) {
-    data.seek = 0;
+    data.seek = 1;
   }
 
   if (!data.hasOwnProperty("index") || !data.seek) {
